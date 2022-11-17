@@ -1,1 +1,21 @@
 console.log('lorena')
+
+function makeHeader() {
+    const header = document.createElement("h2");
+    header.append("Risk");
+    return header
+}
+function makeRiskOutput() {
+    let risk = 99.8
+    const para = document.createElement("p");
+    para.append(document.createTextNode(risk));
+    console.log("Function for calculating risk ")
+    return para
+}
+
+// show title and results in html
+var textareaElement = document.createElement("Div")
+document.body.appendChild(textareaElement);    
+
+document.getElementById("content-target")
+.addEventListener("input", e => console.log('input'))
