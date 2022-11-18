@@ -1,5 +1,15 @@
+<!--
+We'll start with something a little old fashioned
+but often convenient for small applications:
+settign UI and orchestrating response to 
+event listeners in the html page. As you move to 
+bigger projects it becomes convenient (i.e. more modular) 
+to have the UI elements defined by functions
+-->
+
 
 <!-- UI -->
+<hr><h3><a href="..">root</a> / Jonas App</h3><hr>
 <input id="x" size=10 value=9><span id="operator"> x 2 </span>= <span id="res">18</span>
 
 <!-- loading code -->
@@ -10,9 +20,17 @@
     let x = document.getElementById('x')
     let y = document.getElementById('res')
     x.onkeyup=evt=>{
-        y.innerText=jonas.double(x.value)
+        y.innerText=jonas.double(x.value)  // runing code on jonas.js
     }
 </script>
 
-<!-- setting generic styling -->
-<link href="jonas.css" rel="stylesheet">
+<!-- setting generic styling, borrowed from the parent page -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../app.css" rel="stylesheet">
+
+<!-- showing how additional css can be added through <style> -->
+<style>
+    #operator:hover ~ #res {
+        color:red
+    }
+</style>

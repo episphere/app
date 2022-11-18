@@ -1,3 +1,11 @@
+/*
+I am not using it, this is just here to
+show that css content can also be delivered
+in teh html as <style> : you'll find this exact
+same styling code in the html file (have a look)
+*/
+
+
 body{
     color:navy
 }
