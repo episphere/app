@@ -1,4 +1,4 @@
-function calculator(divId){
+function calculator(divId){ // target div
     const arr=[
         ['1','2','3','+','('],
         ['4','5','6','-',')'],
@@ -7,9 +7,10 @@ function calculator(divId){
     ]
     let div=document.getElementById(divId)
     if(!div){
-        div =document.body
+        div =document.body // if no target div is provided
     }
     let divCalc = document.createElement('div')
+    divCalc.id=divCalc.className="jonasCalculator"
     div.appendChild(divCalc)
     divCalc.innerHTML=`<i style="font-size:small"> episphere.github/app/jonas/calculator</i><br>`
     let res = document.createElement('textarea')
@@ -23,14 +24,19 @@ function calculator(divId){
     let funSpan = document.createElement('span')
     divCalc.appendChild(funSpan)
     let funSel = document.createElement('select')
+    //funSel.id='lala'
+    funSel.style.color='navy'
     funSel.style.fontSize='large'
     Object.getOwnPropertyNames(Math).forEach(funTxt=>{
         let opt = document.createElement('option')
-        opt.text=funTxt
+        opt.text=opt.value=funTxt
         funSel.appendChild(opt)
     })
     funSpan.appendChild(funSel)
-    funSpan.innerHTML+=' <input type="checkbox" id="memList"> Mem'
+    let funSpanMem=document.createElement('span')
+    funSpanMem.innerHTML=' <input type="checkbox" id="memList"> <span style="color:green">Mem</span>'
+    funSpan.appendChild(funSpanMem)
+    //funSpan.innerHTML+=' <input type="checkbox" id="memList"> <span style="color:green">Mem</span>'
     let memDiv = document.createElement('div')
     divCalc.appendChild(memDiv)
     
@@ -39,7 +45,7 @@ function calculator(divId){
         console.log(txt,val)
         let memli = document.createElement('span')
         let i = memDiv.children.length+1
-        memli.innerHTML=`<br><span style="color:gray">(${i})</span><button id="mem_${i}" onclick="res.value+='${val}';" style="color:maroon">M</button> <button style="color:gray
+        memli.innerHTML=`<br><span style="color:gray">(${i})</span><button id="mem_${i}" onclick="this.parentElement.parentElement.parentElement.querySelectorAll('textarea')[0].value+='${val}';" style="color:maroon">M</button> <button style="color:gray
 " onclick="this.parentElement.hidden=true;">X</button> <span style="color:blue">${txt}</span>=<span style="color:green">${val}</span> : <input value="..." style="color:gray;border-width:0" onclick="if(this.value=='...'){this.value=''};">`
         
         //memli.querySelector('input').style.borderWidth=0
@@ -83,7 +89,25 @@ function calculator(divId){
             }
         //console.log(i)
     }
-    return tbl
+    //--- local style, is there a better way? ---//
+    divCalc.querySelectorAll('div').forEach(el=>{
+        el.style.color='navy'
+        el.style.fontFamily='sans-serif'
+    })
+    divCalc.querySelectorAll('button').forEach(el=>{
+        el.style.color='blue'
+        el.style.fontFamily='sans-serif'
+        el.style.borderRadius='10px'
+        el.onmouseover=(evt)=>{
+            evt.currentTarget.style.backgroundColor='yellow'
+        }
+        el.onmouseleave=(evt)=>{
+            evt.currentTarget.style.backgroundColor=''
+        }
+        
+        //debugger
+    })
+    return divCalc
 }
 
 export{calculator}

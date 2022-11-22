@@ -1,4 +1,4 @@
-function calculator(divId){
+function calculator(divId){ // target div
     const arr=[
         ['1','2','3','+','('],
         ['4','5','6','-',')'],
@@ -7,9 +7,10 @@ function calculator(divId){
     ]
     let div=document.getElementById(divId)
     if(!div){
-        div =document.body
+        div =document.body // if no target div is provided
     }
     let divCalc = document.createElement('div')
+    divCalc.id=divCalc.className="jonasCalculator"
     div.appendChild(divCalc)
     divCalc.innerHTML=`<i style="font-size:small"> episphere.github/app/jonas/calculator</i><br>`
     let res = document.createElement('textarea')
@@ -39,7 +40,7 @@ function calculator(divId){
         console.log(txt,val)
         let memli = document.createElement('span')
         let i = memDiv.children.length+1
-        memli.innerHTML=`<br><span style="color:gray">(${i})</span><button id="mem_${i}" onclick="res.value+='${val}';" style="color:maroon">M</button> <button style="color:gray
+        memli.innerHTML=`<br><span style="color:gray">(${i})</span><button id="mem_${i}" onclick="this.parentElement.parentElement.parentElement.querySelectorAll('textarea')[0].value+='${val}';" style="color:maroon">M</button> <button style="color:gray
 " onclick="this.parentElement.hidden=true;">X</button> <span style="color:blue">${txt}</span>=<span style="color:green">${val}</span> : <input value="..." style="color:gray;border-width:0" onclick="if(this.value=='...'){this.value=''};">`
         
         //memli.querySelector('input').style.borderWidth=0
