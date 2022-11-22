@@ -12,7 +12,7 @@ function calculator(divId){
     let divCalc = document.createElement('div')
     div.appendChild(divCalc)
     divCalc.innerHTML=`<i style="font-size:small"> episphere.github/app/jonas/calculator</i><br>`
-    res = document.createElement('textarea')
+    let res = document.createElement('textarea')
     res.style.fontSize='large'
     res.style.color='cyan'
     res.style.backgroundColor='black'
@@ -37,10 +37,10 @@ function calculator(divId){
     // --- when memorization is checked  --- //
     function memFun(txt,val){
         console.log(txt,val)
-        let memli = document.createElement('li')
+        let memli = document.createElement('span')
         let i = memDiv.children.length+1
-        memli.innerHTML=`<span style="color:gray">(${i})</span><button id="mem_${i}" onclick="res.value+='${val}';" style="color:maroon">M</button> <button style="color:gray
-" onclick="this.parentElement.hidden=true;">X</button> <span style="color:blue">${txt}</span>=<span style="color:green">${val}</span> : <input value="..." style="color:gray;border-width:0">`
+        memli.innerHTML=`<br><span style="color:gray">(${i})</span><button id="mem_${i}" onclick="res.value+='${val}';" style="color:maroon">M</button> <button style="color:gray
+" onclick="this.parentElement.hidden=true;">X</button> <span style="color:blue">${txt}</span>=<span style="color:green">${val}</span> : <input value="..." style="color:gray;border-width:0" onclick="if(this.value=='...'){this.value=''};">`
         
         //memli.querySelector('input').style.borderWidth=0
         memDiv.prepend(memli)
