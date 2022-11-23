@@ -1,0 +1,56 @@
+#jonasCalculator, jonasCalculator * {
+    all: revert;
+}
+
+#jonasCalculator, jonasCalculator * {
+    font-family:sans-serif;
+    color:navy;
+}
+
+h1 {
+    color:maroon
+}
+
+h2 {
+    color:brown
+}
+
+h3 {
+    color:darkgreen
+}
+
+a {
+    color:blue
+}
+
+a:hover {
+    color:green;
+    background-color:yellow;
+}
+
+.link:hover {
+    background-color:yellow;
+    cursor:pointer;
+}
+
+p {
+  margin-bottom: 1em;
+  line-height: 1.4em;
+}
+
+code {
+  color:darkgreen;
+  font-family:var(--family);
+  font-style: italic;
+}
+
+button {
+  border-radius: 10px;
+  font-size:medium;
+  color:blue;
+}
+
+button:hover {
+   background-color:yellow;
+   cursor:pointer;
+}

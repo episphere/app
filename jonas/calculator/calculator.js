@@ -18,6 +18,7 @@ function calculator(divId){ // target div
     res.style.color='cyan'
     res.style.backgroundColor='black'
     res.rows=5
+    res.cols=18
     divCalc.appendChild(res)
     let tbl = document.createElement('table')
     divCalc.appendChild(tbl)
@@ -66,8 +67,8 @@ function calculator(divId){ // target div
                             res.value='';
                             break;
                         case '=':
-                            let val = eval(res.value.replace(/([A-Z]+[0-9]*)/g,'Math.$1').replace(/([a-z,0-9]+\()/g,'Math.$1'));
-                            if(document.getElementById('memList').checked){ // memorize answer
+                            let val = eval(res.value.replace(/([A-Z]+[0-9]*[A-Z,_]*)/g,'Math.$1').replace(/([a-z,0-9]+\()/g,'Math.$1'));
+                            if(funSpanMem.querySelector('input').checked){ // memorize answer
                                 memFun(res.value,val)
                             }
                             res.value= val;
