@@ -24,14 +24,19 @@ function calculator(divId){ // target div
     let funSpan = document.createElement('span')
     divCalc.appendChild(funSpan)
     let funSel = document.createElement('select')
+    //funSel.id='lala'
+    funSel.style.color='navy'
     funSel.style.fontSize='large'
     Object.getOwnPropertyNames(Math).forEach(funTxt=>{
         let opt = document.createElement('option')
-        opt.text=funTxt
+        opt.text=opt.value=funTxt
         funSel.appendChild(opt)
     })
     funSpan.appendChild(funSel)
-    funSpan.innerHTML+=' <input type="checkbox" id="memList"> Mem'
+    let funSpanMem=document.createElement('span')
+    funSpanMem.innerHTML=' <input type="checkbox" id="memList"> <span style="color:green">Mem</span>'
+    funSpan.appendChild(funSpanMem)
+    //funSpan.innerHTML+=' <input type="checkbox" id="memList"> <span style="color:green">Mem</span>'
     let memDiv = document.createElement('div')
     divCalc.appendChild(memDiv)
     
@@ -84,5 +89,23 @@ function calculator(divId){ // target div
             }
         //console.log(i)
     }
-    return tbl
+    //--- local style, is there a better way? ---//
+    divCalc.querySelectorAll('div').forEach(el=>{
+        el.style.color='navy'
+        el.style.fontFamily='sans-serif'
+    })
+    divCalc.querySelectorAll('button').forEach(el=>{
+        el.style.color='blue'
+        el.style.fontFamily='sans-serif'
+        el.style.borderRadius='10px'
+        el.onmouseover=(evt)=>{
+            evt.currentTarget.style.backgroundColor='yellow'
+        }
+        el.onmouseleave=(evt)=>{
+            evt.currentTarget.style.backgroundColor=''
+        }
+        
+        //debugger
+    })
+    return divCalc
 }
