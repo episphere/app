@@ -42,7 +42,7 @@ function calculator(divId){ // target div
     
     // --- when memorization is checked  --- //
     function memFun(txt,val){
-        console.log(txt,val)
+        //console.log(txt,val)
         let memli = document.createElement('span')
         let i = memDiv.children.length+1
         memli.innerHTML=`<br><span style="color:gray">(${i})</span><button id="mem_${i}" onclick="this.parentElement.parentElement.parentElement.querySelectorAll('textarea')[0].value+='${val}';" style="color:maroon">M</button> <button style="color:gray
