@@ -66,7 +66,7 @@ function calculator(divId){ // target div
                             res.value='';
                             break;
                         case '=':
-                            let val = eval(res.value);
+                            let val = eval(res.value.replace(/([A-Z]+[0-9]*)/g,'Math.$1').replace(/([a-z,0-9]+\()/g,'Math.$1'));
                             if(document.getElementById('memList').checked){ // memorize answer
                                 memFun(res.value,val)
                             }
@@ -74,9 +74,11 @@ function calculator(divId){ // target div
                             break;
                         case 'fun':
                             if(typeof(Math[funSel.value])=='function'){
-                                res.value+=`Math.${funSel.value}(`
+                                //res.value+=`Math.${funSel.value}(`
+                                res.value+=`${funSel.value}(`
                             }else{
-                                res.value+=`Math.${funSel.value}`
+                                //res.value+=`Math.${funSel.value}`
+                                res.value+=`${funSel.value}`
                             }
                             break;
                         default:
