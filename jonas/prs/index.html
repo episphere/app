@@ -4,4 +4,10 @@
 
 <!-- setting generic styling, borrowed from the parent page -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="../../app.css" rel="stylesheet">
+<link href="../app.css" rel="stylesheet">
+<script>
+    (async ()=>{
+        prsCalc = await import('http://localhost:8000/app/jonas/prs/export.js')
+        prsCalc.ui()
+    })() 
+</script>
