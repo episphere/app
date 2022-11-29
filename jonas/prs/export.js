@@ -11,8 +11,8 @@ let PGS23 = {} // a global variable that is not shared by export
 
 PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
     let div = PGS23.divPGS
-    div.innerHTML=`PGS # <input id="pgsID" value=${i} size=5> <button id='btLoadPgs'>load</button>
-    <span id="summarySpan" hidden=true><br><span id="trait_mapped">...</span>, <span id="dataRows">...</span> variants, [<a id="pubDOI" target="_blank">Pub</a>], [<a href="#" id="objJSON" target="_blank">JSON</a>].</span>
+    div.innerHTML=`<b style="color:maroon">A)</b> PGS # <input id="pgsID" value=${i} size=5> <button id='btLoadPgs'>load</button>
+    <span id="summarySpan" hidden=true>[<a id="urlPGS" href='' target="_blank">source</a>]<br><span id="trait_mapped">...</span>, <span id="dataRows">...</span> variants, [<a id="pubDOI" target="_blank">Pub</a>], [<a href="#" id="objJSON">JSON</a>].</span>
     <p><textarea id="pgsTextArea" style="background-color:black;color:lime" cols=60 rows=5>...</textarea></p>`;
     div.querySelector('#pgsID').onkeyup=(evt=>{
         if(evt.keyCode==13){
@@ -23,10 +23,13 @@ PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
     div.querySelector('#btLoadPgs').onclick=async (evt)=>{
         PGS23.pgsTextArea.value='loading ...'
         i = parseInt(div.querySelector('#pgsID').value)
+        let PGSstr = i.toString()
+        PGSstr = "PGS000000".slice(0,-PGSstr.length)+PGSstr
+        div.querySelector('#urlPGS').href=`https://ftp.ebi.ac.uk/pub/databases/spot/pgs/scores/${PGSstr}/ScoringFiles/Harmonized/`
         PGS23.pgsObj = await parsePGS(i)
         div.querySelector('#summarySpan').hidden=false
         div.querySelector('#pubDOI').href='https://doi.org/'+PGS23.pgsObj.meta.citation.match(/doi\:.*$/)[0]
-        div.querySelector('#trait_mapped').innerHTML=PGS23.pgsObj.meta.trait_mapped
+        div.querySelector('#trait_mapped').innerHTML=`<span style="color:maroon">${PGS23.pgsObj.meta.trait_mapped}</span>`
         div.querySelector('#dataRows').innerHTML=PGS23.pgsObj.dt.length
         if(PGS23.pgsObj.txt.length<100000){
             PGS23.pgsTextArea.value = PGS23.pgsObj.txt
@@ -36,11 +39,43 @@ PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
         
         //debugger
     };
+    div.querySelector("#objJSON").onclick=evt=>{
+		//console.log(Date())
+		let cleanObj = structuredClone(PGS23.pgsObj)
+		cleanObj.info=cleanObj.txt.match(/^[^\n]*/)[0]
+		delete cleanObj.txt
+		saveFile(JSON.stringify(cleanObj),cleanObj.meta.pgs_id+'.json')
+    }
 }
 
 PGS23.load23 = async ()=>{
     let div = PGS23.div23
-    div.innerHTML=`Load your 23andMe data file: <input type="file">`
+    div.innerHTML=`<hr><b style="color:maroon">B)</b> Load your 23andMe data file: <input type="file" id="file23andMeInput">`
+	div.querySelector('#file23andMeInput').onchange=evt=>{
+		// if the decompressed txt file is being provided
+		let readTxt = new FileReader()
+		let readZip = new FileReader()
+		readTxt.onload=ev=>{
+			let txt = ev.target.result;
+			debugger
+		}
+		readZip.readAsArrayBuffer=ev=>{
+			debugger
+			ev.arrayBuffer(aa=>{
+				debugger
+			})
+			
+		}
+		
+		if(evt.target.files[0].name.match(/\.txt$/)){
+			readTxt.readAsText(evt.target.files[0])
+		}else if(evt.target.files[0].name.match(/\.zip$/)){
+			readZip.readAsArrayBuffer(evt.target.files[0])
+			//debugger
+		}else{
+			console.error(`wrong file type, neither .txt nor .zip: "${evt.target.files[0].name}"`)
+		}
+	}
 }
 
 function ui(targetDiv=document.body){ // target div for the user interface
@@ -56,6 +91,7 @@ function ui(targetDiv=document.body){ // target div for the user interface
     <p>
     Individual relative risk score for 23andme reports based on <a href='https://www.pgscatalog.org' target="_blank">PGS Catalog</a>.
     [<a href="https://github.com/episphere/app/tree/main/jonas/prs" target="_blank">code</a>][<a href="https://observablehq.com/@episphere/pgs" target="_blank">notebook</a>][<a href="https://gitter.im/episphere/PRS">discussion</a>].
+    Below you can select, and inspect, <b style="color:maroon">A)</b> the PGS catalog entry with the risk scores for a list of genomic variations; and <b style="color:maroon">B)</b> Your 23andMe <a href="https://you.23andme.com/tools/data/download" target="_blank">data download</a>. Once you have both (A) and (B), you proceed to <b style="color:maroon">C)</b> calculate your relative risk for the trait targetted by the PGS entry.
     </p>
     <hr>
     `
