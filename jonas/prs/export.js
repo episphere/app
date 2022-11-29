@@ -11,16 +11,36 @@ let PGS23 = {} // a global variable that is not shared by export
 
 PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
     let div = PGS23.divPGS
-    div.innerHTML=`PGS # <input id="pgsID" value=${i} size=5> <button id='btLoadPgs'>load</button>`;
+    div.innerHTML=`PGS # <input id="pgsID" value=${i} size=5> <button id='btLoadPgs'>load</button>
+    <span id="summarySpan" hidden=true><br><span id="trait_mapped">...</span>, <span id="dataRows">...</span> variants, [<a id="pubDOI" target="_blank">Pub</a>], [<a href="#" id="objJSON" target="_blank">JSON</a>].</span>
+    <p><textarea id="pgsTextArea" style="background-color:black;color:lime" cols=60 rows=5>...</textarea></p>`;
+    div.querySelector('#pgsID').onkeyup=(evt=>{
+        if(evt.keyCode==13){
+            div.querySelector('#btLoadPgs').click()
+        }
+    })
+    PGS23.pgsTextArea = div.querySelector('#pgsTextArea')
     div.querySelector('#btLoadPgs').onclick=async (evt)=>{
+        PGS23.pgsTextArea.value='loading ...'
+        i = parseInt(div.querySelector('#pgsID').value)
         PGS23.pgsObj = await parsePGS(i)
+        div.querySelector('#summarySpan').hidden=false
+        div.querySelector('#pubDOI').href='https://doi.org/'+PGS23.pgsObj.meta.citation.match(/doi\:.*$/)[0]
+        div.querySelector('#trait_mapped').innerHTML=PGS23.pgsObj.meta.trait_mapped
+        div.querySelector('#dataRows').innerHTML=PGS23.pgsObj.dt.length
+        if(PGS23.pgsObj.txt.length<100000){
+            PGS23.pgsTextArea.value = PGS23.pgsObj.txt
+        }else{
+            PGS23.pgsTextArea.value = PGS23.pgsObj.txt.slice(0,100000)+`...\n... (${PGS23.pgsObj.dt.length} variants) ...`
+        }
+        
         //debugger
     };
 }
 
 PGS23.load23 = async ()=>{
     let div = PGS23.div23
-    div.innerHTML=`... 23 ...`
+    div.innerHTML=`Load your 23andMe data file: <input type="file">`
 }
 
 function ui(targetDiv=document.body){ // target div for the user interface
@@ -53,9 +73,10 @@ function ui(targetDiv=document.body){ // target div for the user interface
 
 async function parsePGS(i=4){
     let obj = {id:i}
-    let rows = (await pgs.loadScore(i)).split(/[\r\n]/g)
+    obj.txt = await pgs.loadScore(i)
+    let rows = obj.txt.split(/[\r\n]/g)
     let metaL = rows.filter(r=>(r[0]=='#')).length
-    obj.meta = rows.slice(0,metaL)
+    obj.meta = {txt:rows.slice(0,metaL)}
     obj.cols = rows[metaL].split(/\t/g)
     obj.dt = rows.slice(metaL+1).map(r=>r.split(/\t/g))
     if(obj.dt.slice(-1).length==1){
@@ -78,7 +99,29 @@ async function parsePGS(i=4){
         })
         return r
     })
+    // parse metadata
+    obj.meta.txt.filter(r=>(r[1]!='#')).forEach(aa=>{
+        aa=aa.slice(1).split('=')
+        obj.meta[aa[0]]=aa[1]
+        //debugger
+    })
     return obj
+}
+
+function saveFile(x,fileName) { // x is the content of the file
+	// var bb = new Blob([x], {type: 'application/octet-binary'});
+	// see also https://github.com/eligrey/FileSaver.js
+	var bb = new Blob([x]);
+   	var url = URL.createObjectURL(bb);
+	var a = document.createElement('a');
+   	a.href=url;
+	if (fileName){
+		if(typeof(fileName)=="string"){ // otherwise this is just a boolean toggle or something of the sort
+			a.download=fileName;
+		}
+		a.click() // then download it automatically 
+	} 
+	return a
 }
 
 export{
