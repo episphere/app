@@ -1,3 +1,7 @@
+// to inspect all data in the console
+// dataObj=document.getElementById("PGS23calc").PGS23data
+
+
 // This library was created before transitioning fully to ES6 modules
 // Specifically the pgs library is a dependency satisfied by script tag loading
 if(typeof(pgs)=='undefined'){
@@ -6,8 +10,13 @@ if(typeof(pgs)=='undefined'){
     document.head.appendChild(s)
 }
 // pgs is now in the global scope, if it was not there already
+// import * as zip from "https://deno.land/x/zipjs/index.js"
 
-let PGS23 = {} // a global variable that is not shared by export
+let PGS23 = { // a global variable that is not shared by export
+	data:{}
+}
+
+// in case someone wants to see it in the console
 
 PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
     let div = PGS23.divPGS
@@ -36,7 +45,11 @@ PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
         }else{
             PGS23.pgsTextArea.value = PGS23.pgsObj.txt.slice(0,100000)+`...\n... (${PGS23.pgsObj.dt.length} variants) ...`
         }
-        
+        //PGS23.data.pgs=pgsObj
+		let cleanObj = structuredClone(PGS23.pgsObj)
+		cleanObj.info=cleanObj.txt.match(/^[^\n]*/)[0]
+		delete cleanObj.txt
+		PGS23.data.pgs=cleanObj
         //debugger
     };
     div.querySelector("#objJSON").onclick=evt=>{
@@ -50,21 +63,35 @@ PGS23.loadPGS = async (i=4)=>{ // startng with a default pgs
 
 PGS23.load23 = async ()=>{
     let div = PGS23.div23
-    div.innerHTML=`<hr><b style="color:maroon">B)</b> Load your 23andMe data file: <input type="file" id="file23andMeInput">`
+    div.innerHTML=`<hr><b style="color:maroon">B)</b> Load your 23andMe data file: <input type="file" id="file23andMeInput">
+	<br><span hidden=true id="my23hidden" style="font-size:small">
+		 <span style="color:maroon" id="my23Info"></span> (<span id="my23variants"></span> variants) [<a href='#' id="json23">JSON</a>].
+	</span>
+	<p><textarea id="my23TextArea" style="background-color:black;color:lime" cols=60 rows=5>...</textarea></p>`
 	div.querySelector('#file23andMeInput').onchange=evt=>{
-		// if the decompressed txt file is being provided
+		function UI23(my23){ // user interface
+			div.querySelector("#my23hidden").hidden=false
+			div.querySelector("#my23Info").innerText=my23.info
+			div.querySelector("#my23variants").innerText=my23.dt.length
+			div.querySelector("#json23").onclick=_=>{
+				saveFile(JSON.stringify(my23),my23.info.replace(/\.[^\.]+$/,'')+'.json')
+			}
+			PGS23.data.my23=my23
+		}
 		let readTxt = new FileReader()
 		let readZip = new FileReader()
 		readTxt.onload=ev=>{
 			let txt = ev.target.result;
-			debugger
+			div.querySelector("#my23TextArea").value=txt.slice(0,10000).replace(/[^\r\n]+$/,'')+'\n\n .................. \n\n'+txt.slice(-300).replace(/^[^\r\n]+/,'')
+			//let my23 = parse23(txt,evt.target.files[0].name)
+			UI23(parse23(txt,evt.target.files[0].name))
 		}
-		readZip.readAsArrayBuffer=ev=>{
-			debugger
-			ev.arrayBuffer(aa=>{
+		readZip.readAsArrayBuffer=async ev=>{
+			await ev.arrayBuffer(x=>{
 				debugger
 			})
-			
+			//let txt=await pako.inflate(ev.arrayBuffer(), { to: 'string' })
+			//debugger
 		}
 		
 		if(evt.target.files[0].name.match(/\.txt$/)){
@@ -78,6 +105,13 @@ PGS23.load23 = async ()=>{
 	}
 }
 
+PGS23.loadCalc = async ()=>{
+	let div=PGS23.divCalc
+	div.innerHTML=`<hr>
+	 <b style="color:maroon">C)</b> Relative risk calculation, the easiest bit,
+	  next week :-), <p>If you want to see the current state of the two data objects try <code>data = document.getElementById("PGS23calc").PGS23data</code> in the browser console</p>`
+}
+
 function ui(targetDiv=document.body){ // target div for the user interface
     //console.log(`prsCalc module imported at ${Date()}`)
     if(typeof(targetDiv)=='string'){
@@ -89,15 +123,19 @@ function ui(targetDiv=document.body){ // target div for the user interface
     div.id='prsCalcUI'
     div.innerHTML=`
     <p>
-    Individual relative risk score for 23andme reports based on <a href='https://www.pgscatalog.org' target="_blank">PGS Catalog</a>.
-    [<a href="https://github.com/episphere/app/tree/main/jonas/prs" target="_blank">code</a>][<a href="https://observablehq.com/@episphere/pgs" target="_blank">notebook</a>][<a href="https://gitter.im/episphere/PRS">discussion</a>].
-    Below you can select, and inspect, <b style="color:maroon">A)</b> the PGS catalog entry with the risk scores for a list of genomic variations; and <b style="color:maroon">B)</b> Your 23andMe <a href="https://you.23andme.com/tools/data/download" target="_blank">data download</a>. Once you have both (A) and (B), you proceed to <b style="color:maroon">C)</b> calculate your relative risk for the trait targetted by the PGS entry.
+    Individual relative risk calculation for 23andme reports based on <a href='https://www.pgscatalog.org' target="_blank">PGS Catalog</a>.
+    See also this project's [<a href="https://github.com/episphere/app/tree/main/jonas/prs" target="_blank">code</a>][<a href="https://observablehq.com/@episphere/pgs" target="_blank">notebook</a>][<a href="https://gitter.im/episphere/PRS">discussion</a>].
+    </p><p>
+	Below you can select, and inspect, <b style="color:maroon">A)</b> the PGS catalog entry with the risk scores for a list of genomic variations; and <b style="color:maroon">B)</b> Your 23andMe <a href="https://you.23andme.com/tools/data/download" target="_blank">data download</a>. Once you have both (A) and (B), you can proceed to <b style="color:maroon">C)</b> calculate your relative risk for the trait targetted by the PGS entry.
     </p>
     <hr>
     `
     // recall that PGS23 is only global to the module, it is not exported
     PGS23.divPGS = document.createElement('div');div.appendChild(PGS23.divPGS)
     PGS23.div23 = document.createElement('div');div.appendChild(PGS23.div23)
+	PGS23.divCalc = document.createElement('div');div.appendChild(PGS23.divCalc)
+	PGS23.divCalc.id="PGS23calc"
+	PGS23.divCalc.PGS23data=PGS23.data
     // the more conventional alternative would be something like 
     // let divPGS = document.createElement('div');div.appendChild(divPGS)
     // let div23 = document.createElement('div');div.appendChild(div23)
@@ -105,6 +143,7 @@ function ui(targetDiv=document.body){ // target div for the user interface
     PGS23.div=div // for convenience, mapping the in multiple ways
     PGS23.loadPGS()
     PGS23.load23()
+	PGS23.loadCalc()
 }
 
 async function parsePGS(i=4){
@@ -142,6 +181,22 @@ async function parsePGS(i=4){
         //debugger
     })
     return obj
+}
+
+function parse23(txt,info){ // normally info is the file name
+	let obj = {}
+	let rows = txt.split(/[\r\n]+/g)
+	let n = rows.filter(r=>(r[0]=='#')).length
+	obj.meta=rows.slice(0,n-1).join('\r\n')
+	obj.cols=rows[n-1].slice(2).split(/\t/)
+	obj.dt=rows.slice(n)
+	obj.dt=obj.dt.map(r=>{
+		r=r.split('\t')
+		r[2]=parseInt(r[2]) // position in the chr
+		return r
+	})
+	obj.info=info
+	return obj
 }
 
 function saveFile(x,fileName) { // x is the content of the file
