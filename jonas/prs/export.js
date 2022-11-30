@@ -108,8 +108,19 @@ PGS23.load23 = async ()=>{
 PGS23.loadCalc = async ()=>{
 	let div=PGS23.divCalc
 	div.innerHTML=`<hr>
-	 <b style="color:maroon">C)</b> Relative risk calculation, the easiest bit,
-	  next week :-), <p>If you want to see the current state of the two data objects try <code>data = document.getElementById("PGS23calc").PGS23data</code> in the browser console</p>`
+	<b style="color:maroon">C)</b> Relative risk calculation, the easiest bit,
+	next week :-),
+	<p><button id="buttonCalculateRisk">Calculate Relative Risk</button><span id="IsaidNextWeek" style="color:red;background-color:yellow" hidden=true> I said next week ;-)</span></p>
+	<p>If you want to see the current state of the two data objects try <code>data = document.getElementById("PGS23calc").PGS23data</code> in the browser console</p>`
+	div.querySelector('#buttonCalculateRisk').onclick=evt=>{
+		let nextWeek=div.querySelector('#IsaidNextWeek')
+		nextWeek.hidden=false
+		div.querySelector('#buttonCalculateRisk')
+		setTimeout(function(){
+			nextWeek.hidden=true
+		},1000)
+		//debugger
+	}
 }
 
 function ui(targetDiv=document.body){ // target div for the user interface
